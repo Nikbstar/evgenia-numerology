@@ -3,13 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#110b1c" />
+  <meta id="themeColor" name="theme-color" content="#110b1c" />
   <meta name="description" content="Евгения — нумерология. Все социальные сети в одном месте." />
   <meta name="robots" content="index,follow" />
 
   <title>Евгения — нумерология</title>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="base.css" />
+  <link id="themeStylesheet" rel="stylesheet" href="theme-cosmic.css" />
+
+  <script>
+    (() => {
+      const allowed = ['cosmic', 'pearl', 'aurora', 'oracle'];
+      try {
+        const saved = localStorage.getItem('evgenia-theme');
+        if (allowed.includes(saved)) {
+          document.getElementById('themeStylesheet').href = `theme-${saved}.css`;
+        }
+      } catch (_) {}
+    })();
+  </script>
 </head>
 
 <body>
@@ -24,23 +37,19 @@
       <p class="subtitle">Все мои социальные сети в одном месте</p>
 
       <nav class="links" aria-label="Социальные сети">
-
-        <!-- Замените username на реальное имя пользователя -->
+        <!-- Замените username на реальные данные -->
         <a class="social-link"
            href="https://t.me/username"
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Открыть Telegram">
-
           <span class="social-icon">
             <img src="icons/telegram.svg" alt="" />
           </span>
-
           <span class="social-text">
             <span class="social-name">Telegram</span>
             <span class="social-handle">@username</span>
           </span>
-
           <span class="arrow" aria-hidden="true">›</span>
         </a>
 
@@ -49,16 +58,13 @@
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Открыть ВКонтакте">
-
           <span class="social-icon">
             <img src="icons/vk.svg" alt="" />
           </span>
-
           <span class="social-text">
             <span class="social-name">ВКонтакте</span>
             <span class="social-handle">@username</span>
           </span>
-
           <span class="arrow" aria-hidden="true">›</span>
         </a>
 
@@ -67,16 +73,13 @@
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Открыть Instagram">
-
           <span class="social-icon">
             <img src="icons/instagram.svg" alt="" />
           </span>
-
           <span class="social-text">
             <span class="social-name">Instagram</span>
             <span class="social-handle">@username</span>
           </span>
-
           <span class="arrow" aria-hidden="true">›</span>
         </a>
 
@@ -85,23 +88,93 @@
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Открыть WhatsApp">
-
           <span class="social-icon">
             <img src="icons/whatsapp.svg" alt="" />
           </span>
-
           <span class="social-text">
             <span class="social-name">WhatsApp</span>
             <span class="social-handle">Написать сообщение</span>
           </span>
-
           <span class="arrow" aria-hidden="true">›</span>
         </a>
-
       </nav>
 
       <div class="footer-mark" aria-hidden="true">1 · 3 · 7 · 9</div>
+
+      <div class="theme-switcher" role="group" aria-label="Выбор дизайна">
+        <span class="theme-label">Дизайн</span>
+        <button class="theme-button"
+                type="button"
+                data-theme="cosmic"
+                aria-label="Дизайн: Космос"
+                title="Космос"></button>
+        <button class="theme-button"
+                type="button"
+                data-theme="pearl"
+                aria-label="Дизайн: Жемчуг"
+                title="Жемчуг"></button>
+        <button class="theme-button"
+                type="button"
+                data-theme="aurora"
+                aria-label="Дизайн: Аврора"
+                title="Аврора"></button>
+        <button class="theme-button"
+                type="button"
+                data-theme="oracle"
+                aria-label="Дизайн: Оракул"
+                title="Оракул"></button>
+      </div>
     </section>
   </main>
+
+  <script>
+    (() => {
+      const themes = {
+        cosmic: { file: 'theme-cosmic.css', color: '#110b1c' },
+        pearl:  { file: 'theme-pearl.css',  color: '#f6ede4' },
+        aurora: { file: 'theme-aurora.css', color: '#1c1040' },
+        oracle: { file: 'theme-oracle.css', color: '#071915' }
+      };
+
+      const stylesheet = document.getElementById('themeStylesheet');
+      const themeColor = document.getElementById('themeColor');
+      const buttons = [...document.querySelectorAll('.theme-button')];
+
+      function getSavedTheme() {
+        try {
+          const saved = localStorage.getItem('evgenia-theme');
+          return themes[saved] ? saved : 'cosmic';
+        } catch (_) {
+          return 'cosmic';
+        }
+      }
+
+      function setTheme(name, persist = true) {
+        const theme = themes[name] || themes.cosmic;
+        stylesheet.href = theme.file;
+        themeColor.content = theme.color;
+        document.documentElement.dataset.theme = name;
+
+        buttons.forEach(button => {
+          button.setAttribute(
+            'aria-pressed',
+            String(button.dataset.theme === name)
+          );
+        });
+
+        if (persist) {
+          try {
+            localStorage.setItem('evgenia-theme', name);
+          } catch (_) {}
+        }
+      }
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => setTheme(button.dataset.theme));
+      });
+
+      setTheme(getSavedTheme(), false);
+    })();
+  </script>
 </body>
 </html>
